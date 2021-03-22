@@ -1,25 +1,39 @@
-package com.algaworks.algamoney.api.model;
+package com.ctsousa.algamoney.api.model;
 
-import java.io.Serializable;
-
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "categoria")
-public class Categoria implements Serializable {
-
-	private static final long serialVersionUID = -1795514691469592963L;
+@Table(name = "pessoa")
+public class Pessoa {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
-
+	
+	@Column(name = "nome", nullable = false)
 	private String nome;
-
+	
+	@Embedded
+	private Endereco endereco;
+	
+	@Column(name = "ativo", nullable = false)
+	private Boolean ativo;
+	
+	public Pessoa() { }
+	
+	public Pessoa(Long codigo) {
+		setCodigo(codigo);
+	}
+	
 	public Long getCodigo() {
 		return codigo;
 	}
@@ -35,6 +49,29 @@ public class Categoria implements Serializable {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
+	}
+	
+	@JsonIgnore
+	@Transient
+	public boolean isInativo() {
+		return !ativo;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -52,7 +89,7 @@ public class Categoria implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Categoria other = (Categoria) obj;
+		Pessoa other = (Pessoa) obj;
 		if (codigo == null) {
 			if (other.codigo != null)
 				return false;
