@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.ctsousa.algamoney.api.event.RecursoCriadoEvent;
 import com.ctsousa.algamoney.api.model.Pessoa;
 import com.ctsousa.algamoney.api.model.dto.PessoaDto;
 import com.ctsousa.algamoney.api.repository.PessoaRepository;
+import com.ctsousa.algamoney.api.security.Authority;
 import com.ctsousa.algamoney.api.service.PessoaService;
 
 @RestController
@@ -35,11 +37,13 @@ public class PessoaResource extends AbstractResource<Pessoa> {
 	private PessoaService pessoaService;
 	
 	@GetMapping
+	@PreAuthorize(Authority.PESQUISAR_PESSOA)
 	public List<Pessoa> listar() {
 		return pessoaRepository.findAll();
 	}
 	
 	@PostMapping
+	@PreAuthorize(Authority.CADASTRAR_PESSOA)
 	public ResponseEntity<Pessoa> criar(@Valid @RequestBody PessoaDto pessoaDto, HttpServletResponse response) {
 		Pessoa pessoa = new Pessoa();
 		pessoa = pessoaRepository.save(pessoaDto.toPessoa());
@@ -50,6 +54,7 @@ public class PessoaResource extends AbstractResource<Pessoa> {
 	}
 	
 	@GetMapping("/{codigo}")
+	@PreAuthorize(Authority.PESQUISAR_PESSOA)
 	public ResponseEntity<Pessoa> buscarPeloCodigo(@PathVariable Long codigo) {
 		Pessoa pessoa = pessoaRepository.findOne(codigo);
 		
@@ -62,6 +67,7 @@ public class PessoaResource extends AbstractResource<Pessoa> {
 	
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@PreAuthorize(Authority.REMOVER_PESSOA)
 	public void delete(@PathVariable Long codigo) {
 		pessoaRepository.delete(codigo);
 	}

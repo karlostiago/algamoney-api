@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ import com.ctsousa.algamoney.api.model.Lancamento;
 import com.ctsousa.algamoney.api.model.dto.LancamentoDto;
 import com.ctsousa.algamoney.api.repository.LancamentoRepository;
 import com.ctsousa.algamoney.api.repository.filter.LancamentoFilter;
+import com.ctsousa.algamoney.api.security.Authority;
 import com.ctsousa.algamoney.api.service.CategoriaService;
 import com.ctsousa.algamoney.api.service.LancamentoService;
 import com.ctsousa.algamoney.api.service.PessoaService;
@@ -50,11 +52,13 @@ public class LancamentoResource extends AbstractResource<Lancamento> {
 	private LancamentoService lancamentoService;
 	
 	@GetMapping
+	@PreAuthorize(Authority.PESQUISAR_LANCAMENTO)
 	public Page<Lancamento> pesquisar(LancamentoFilter filter, Pageable pageable) {
 		return lancamentoRepository.filtrar(filter, pageable);
 	}
 	
 	@GetMapping("/{codigo}")
+	@PreAuthorize(Authority.PESQUISAR_LANCAMENTO)
 	public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable Long codigo) {
 		try {
 			
@@ -73,6 +77,7 @@ public class LancamentoResource extends AbstractResource<Lancamento> {
 	}
 	
 	@PostMapping
+	@PreAuthorize(Authority.CADASTRAR_LANCAMENTO)
 	public ResponseEntity<Lancamento> criar(@Valid @RequestBody LancamentoDto lancamentoDto, HttpServletResponse response) {
 		Lancamento lancamento = new Lancamento();
 		lancamento = lancamentoService.salvar(lancamentoDto.toLancamento());
@@ -84,6 +89,7 @@ public class LancamentoResource extends AbstractResource<Lancamento> {
 	
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	@PreAuthorize(Authority.REMOVER_LANCAMENTO)
 	public void deletar(@PathVariable Long codigo) {
 		lancamentoRepository.delete(codigo);
 	}
