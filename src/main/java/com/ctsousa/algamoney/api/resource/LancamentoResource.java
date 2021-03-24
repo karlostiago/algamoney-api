@@ -29,6 +29,7 @@ import com.ctsousa.algamoney.api.model.Lancamento;
 import com.ctsousa.algamoney.api.model.dto.LancamentoDto;
 import com.ctsousa.algamoney.api.repository.LancamentoRepository;
 import com.ctsousa.algamoney.api.repository.filter.LancamentoFilter;
+import com.ctsousa.algamoney.api.repository.projection.ResumoLancamento;
 import com.ctsousa.algamoney.api.security.Authority;
 import com.ctsousa.algamoney.api.service.CategoriaService;
 import com.ctsousa.algamoney.api.service.LancamentoService;
@@ -55,6 +56,12 @@ public class LancamentoResource extends AbstractResource<Lancamento> {
 	@PreAuthorize(Authority.PESQUISAR_LANCAMENTO)
 	public Page<Lancamento> pesquisar(LancamentoFilter filter, Pageable pageable) {
 		return lancamentoRepository.filtrar(filter, pageable);
+	}
+	
+	@GetMapping(params = "resumo")
+	@PreAuthorize(Authority.PESQUISAR_LANCAMENTO)
+	public Page<ResumoLancamento> resumir(LancamentoFilter filter, Pageable pageable) {
+		return lancamentoRepository.resumir(filter, pageable);
 	}
 	
 	@GetMapping("/{codigo}")
