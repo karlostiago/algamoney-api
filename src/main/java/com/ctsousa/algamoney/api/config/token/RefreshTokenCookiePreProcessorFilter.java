@@ -1,4 +1,4 @@
-package com.ctsousa.algamoney.api.token;
+package com.ctsousa.algamoney.api.config.token;
 
 import java.io.IOException;
 import java.util.Map;
