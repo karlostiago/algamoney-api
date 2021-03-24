@@ -1,0 +1,1 @@
+UPDATE public.usuario SET senha = '$2a$10$dtHehg7PT16NVLPEb5XbEeKcWbWi8TRGb6IYZ9vyB62zIuqI7WXAK';
