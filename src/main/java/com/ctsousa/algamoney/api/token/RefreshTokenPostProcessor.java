@@ -4,6 +4,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -16,6 +17,8 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import com.ctsousa.algamoney.api.config.property.AlgamoneyApiProperty;
+
 @RestControllerAdvice
 public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2AccessToken> {
 
@@ -23,6 +26,9 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 	private static final String REFRESH_TOKEN = "refreshToken";
 	private static final String PATH_OAUTH_TOKEN = "/oauth/token";
 	private static final int MAX_AGE_COOKIE = 2592000; // 30 dias
+	
+	@Autowired
+	private AlgamoneyApiProperty algamoneyApiProperty;
 	
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -53,7 +59,7 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 	private void adicionarRefreshTokenNoCookie(String refreshToken, HttpServletRequest req, HttpServletResponse res) {
 		Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN, refreshToken);
 		refreshTokenCookie.setHttpOnly(true);
-		refreshTokenCookie.setSecure(false);
+		refreshTokenCookie.setSecure(algamoneyApiProperty.getSeguranca().isEnableHttps());
 		refreshTokenCookie.setPath(req.getContextPath() + PATH_OAUTH_TOKEN);
 		refreshTokenCookie.setMaxAge(MAX_AGE_COOKIE);
 		res.addCookie(refreshTokenCookie);

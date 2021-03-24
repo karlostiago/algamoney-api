@@ -11,9 +11,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import com.ctsousa.algamoney.api.config.property.AlgamoneyApiProperty;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -28,12 +31,12 @@ public class CorsFilter implements Filter {
 	private static final String METHODS = "POST, GET, DELETE, PUT, OPTIONS";
 	private static final String HEADERS = "Authorization, Content-Type, Accept";
 	private static final String MAX_AGE = "3600";
-	private static final String ORIGEM_PERMITIDA = "origemPermitida";
 	private static final String CREDENTIALS = "true";
 	private static final String ORIGIN = "Origin";
 	
-	private String origemPermitida = "http://localhost:8000";
-
+	@Autowired
+	private AlgamoneyApiProperty algamoneyApiProperty;
+	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
@@ -41,10 +44,10 @@ public class CorsFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 		
-		response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ORIGEM_PERMITIDA);
+		response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, algamoneyApiProperty.getOrigemPermitida());
 		response.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, CREDENTIALS);
 		
-		if(OPTIONS.equals(request.getMethod()) && origemPermitida.equals(request.getHeader(ORIGIN))) {
+		if(OPTIONS.equals(request.getMethod()) && algamoneyApiProperty.getOrigemPermitida().equals(request.getHeader(ORIGIN))) {
 			response.setHeader(ACCESS_CONTROL_ALLOW_METHODS, METHODS);
 			response.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, HEADERS);
 			response.setHeader(ACCESS_CONTROL_MAX_AGE, MAX_AGE);
