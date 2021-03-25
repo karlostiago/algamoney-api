@@ -52,7 +52,7 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa> implements 
 		List<Predicate> predicates = new ArrayList<>();
 		
 		if(StringUtils.hasText(filter.getNome())) {
-			predicates.add(builder.like(root.get(NOME), "%" + filter.getNome() + "%"));
+			predicates.add(builder.like(builder.lower(root.get(NOME)), "%" + filter.getNome().toLowerCase() + "%"));
 		}
 		
 		return predicates.toArray(new Predicate[predicates.size()]);
