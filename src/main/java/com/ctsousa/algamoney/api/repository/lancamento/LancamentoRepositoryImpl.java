@@ -3,8 +3,6 @@ package com.ctsousa.algamoney.api.repository.lancamento;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,13 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
 import com.ctsousa.algamoney.api.model.Lancamento;
+import com.ctsousa.algamoney.api.repository.AbstractRepository;
 import com.ctsousa.algamoney.api.repository.filter.LancamentoFilter;
 import com.ctsousa.algamoney.api.repository.projection.ResumoLancamento;
 
-public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
-	
-	@PersistenceContext
-	private EntityManager manager;
+public class LancamentoRepositoryImpl extends AbstractRepository<Lancamento> implements LancamentoRepositoryQuery {
 	
 	private static final String DATA_VENCIMENTO = "dataVencimento";
 	private static final String DESCRICAO = "descricao";

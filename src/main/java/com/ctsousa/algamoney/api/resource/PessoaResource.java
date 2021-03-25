@@ -1,11 +1,11 @@
 package com.ctsousa.algamoney.api.resource;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +23,7 @@ import com.ctsousa.algamoney.api.event.RecursoCriadoEvent;
 import com.ctsousa.algamoney.api.model.Pessoa;
 import com.ctsousa.algamoney.api.model.dto.PessoaDto;
 import com.ctsousa.algamoney.api.repository.PessoaRepository;
+import com.ctsousa.algamoney.api.repository.filter.PessoaFilter;
 import com.ctsousa.algamoney.api.security.Authority;
 import com.ctsousa.algamoney.api.service.PessoaService;
 
@@ -38,8 +39,8 @@ public class PessoaResource extends AbstractResource<Pessoa> {
 	
 	@GetMapping
 	@PreAuthorize(Authority.PESQUISAR_PESSOA)
-	public List<Pessoa> listar() {
-		return pessoaRepository.findAll();
+	public Page<Pessoa> pesquisar(PessoaFilter filter, Pageable pageable) {
+		return pessoaRepository.filtrar(filter, pageable);
 	}
 	
 	@PostMapping
