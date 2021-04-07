@@ -32,7 +32,9 @@ public class LancamentoService {
 	
 	public Lancamento atualizar(Long codigo, LancamentoDto lancamentoDto) {
 		Lancamento lancamento = lancamentoRepository.findOne(codigo);
+		
 		BeanUtils.copyProperties(lancamentoDto, lancamento, "codigo");
+		
 		if(lancamento != null && lancamento.getPessoa().isInativo()) {
 			throw new PessoaInexistenteOuInativaException();
 		}
