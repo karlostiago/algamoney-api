@@ -37,17 +37,20 @@ public class CorsFilter implements Filter {
 	@Autowired
 	private AlgamoneyApiProperty algamoneyApiProperty;
 	
+	private String[] origensPermitidas;
+	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
 		
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		
-		response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, algamoneyApiProperty.getOrigemPermitida());
+		origensPermitidas = algamoneyApiProperty.getOrigemPermitida().split(",");
+				
+		response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, getOrigemPermitida(request));
 		response.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, CREDENTIALS);
 		
-		if(OPTIONS.equals(request.getMethod()) && algamoneyApiProperty.getOrigemPermitida().equals(request.getHeader(ORIGIN))) {
+		if(OPTIONS.equals(request.getMethod()) && temOriginPermitida(request)) {
 			response.setHeader(ACCESS_CONTROL_ALLOW_METHODS, METHODS);
 			response.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, HEADERS);
 			response.setHeader(ACCESS_CONTROL_MAX_AGE, MAX_AGE);
@@ -56,6 +59,29 @@ public class CorsFilter implements Filter {
 		else {
 			chain.doFilter(request, response);
 		}
+	}
+	
+	private String getOrigemPermitida(HttpServletRequest request) {
+		for(String origemPermitida : this.origensPermitidas) {
+			if(request.getHeader(ORIGIN).equals(origemPermitida.trim())) {
+				return origemPermitida;
+			}
+		}
+		
+		return null;
+	}
+	
+	private boolean temOriginPermitida(HttpServletRequest request) {
+		boolean temOrigemPermitida = false;
+		
+		for(String origemPermitida : this.origensPermitidas) {
+			if(request.getHeader(ORIGIN).equals(origemPermitida.trim())) {
+				temOrigemPermitida = true;
+				break;
+			}
+		}
+		
+		return temOrigemPermitida;
 	}
 	
 	@Override
