@@ -33,6 +33,7 @@ public class CorsFilter implements Filter {
 	private static final String MAX_AGE = "3600";
 	private static final String CREDENTIALS = "true";
 	private static final String ORIGIN = "Origin";
+	private static final String ORIGIN_DEFAULT = "http://localhost:8080";
 	
 	@Autowired
 	private AlgamoneyApiProperty algamoneyApiProperty;
@@ -63,12 +64,12 @@ public class CorsFilter implements Filter {
 	
 	private String getOrigemPermitida(HttpServletRequest request) {
 		for(String origemPermitida : this.origensPermitidas) {
-			if(request.getHeader(ORIGIN).equals(origemPermitida.trim())) {
+			if(request.getHeader(ORIGIN) != null && request.getHeader(ORIGIN).equals(origemPermitida.trim())) {
 				return origemPermitida;
 			}
 		}
 		
-		return null;
+		return ORIGIN_DEFAULT;
 	}
 	
 	private boolean temOriginPermitida(HttpServletRequest request) {
