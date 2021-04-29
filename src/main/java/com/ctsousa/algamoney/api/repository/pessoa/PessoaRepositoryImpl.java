@@ -32,7 +32,9 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa> implements 
 		criteria.where(predicates);
 		
 		TypedQuery<Pessoa> query = manager.createQuery(criteria);
-				
+		
+		adicionarRestricoesDePaginacao(query, pageable);
+		
 		return new PageImpl<>(query.getResultList(), pageable, count(filter));
 	}
 	
@@ -56,5 +58,13 @@ public class PessoaRepositoryImpl extends AbstractRepository<Pessoa> implements 
 		}
 		
 		return predicates.toArray(new Predicate[predicates.size()]);
+	}
+	
+	private void adicionarRestricoesDePaginacao(TypedQuery<?> query, Pageable pageable) {
+		int paginaAtual = pageable.getPageNumber();
+		int totalRegistroPorPagina = pageable.getPageSize();
+		int primerioRegistroDaPagina = paginaAtual * totalRegistroPorPagina;
+		query.setFirstResult(primerioRegistroDaPagina);
+		query.setMaxResults(totalRegistroPorPagina);
 	}
 }
